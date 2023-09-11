@@ -1,0 +1,55 @@
+level_1.json:
+    (original) maps:
+        [0].end_x=9086
+        [2].end_x=9086
+
+input()函数阻塞进程，无法监听
+
+level.py:
+    draw:
+        原绘图函数导致卡帧并画在了原图上
+    collision detection:
+        if (最右边的x-最左边的x<宽之和) and (最上面的y-最下面的y<高之和):
+            return collide
+        else :
+            return not collide
+    同时出现了 跳到水管上之后导致y方向不更新，在空中停止:
+        1.把只有fall状态的重力改为所有状态
+        2.在check_ycollision处加入check_fall->跳不起来了:必须判断是否跳跃状态->不能连跳了:见3
+        3.更新连跳法则:符合物理规律，若一直有方向连跳，则不会影响连跳高度；但是若跳到一个高位或者低位，自己却没有方向前进或后退，则有缓冲小跳，后立马大跳
+        
+为了让重置游戏，则需要多次init，发现循环，则换成start方法。init另写其他特征
+复类就是可以继承原类的许多方法和特征，然后进行新特征加入
+
+bug: 人物0命之后游戏结束 但是重开显示生命-1, -2...
+    1、修改gameover的判断是小于等于0
+    2、cursor更新info
+
+bug: level.py文件中无法画出砖块：
+    逻辑问题。砖块应在图层上 所以要后画
+    砖块画好后，碰撞模型用sprite.Group整合，但是导致砖块不能跳起来
+
+虽说不能circular使用自定义头文件，但是可以编写先用着，函数写个传入值，这样方便调用函数
+
+8.25:0.39 update:
+    怪物不掉入虚空机制
+    1.10 update:
+    怪物掉落的时候可能直接穿模： (双引号没有写的话 空中会继续random可能一直穿模就没有check_ycollision，同时如果连着写可能导致怪物上阶梯，所以必须写if-else)
+            if choice == 1 " or self.state=='fall' ": #1/2概率掉下去,且如果掉落不出现bug
+            self.check_ycollision(level)
+            level.check_fall(self)  
+        else:
+            self.check_fall(level)
+
+8.25：
+    上午:
+        renew.checkpoint->一直弹出None无法检查->python的键值对匹配，加一个key=key即可
+        renew.kill_monsters->但是mario乱杀
+
+8.25,11:50:
+    马里奥踩人，顶人
+    符合物理规律，踩了之后小跳
+    先改成怪物踩我头,死->bug
+
+8.26：蘑菇跳吃不变身
+9.4：增加鼠标交互玩法
